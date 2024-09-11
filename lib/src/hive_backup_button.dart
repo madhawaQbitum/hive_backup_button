@@ -51,7 +51,7 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
+    return FloatingActionButton(
       onPressed: () async {
         await backupDatabase();
       },
