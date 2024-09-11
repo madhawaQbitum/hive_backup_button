@@ -19,7 +19,7 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
   Future<void> backupDatabase() async {
     if (await widget.permission) {
 
-      const String backupDirectoryPath = '/storage/emulated/0/hive';
+      const String backupDirectoryPath = '/storage/emulated/0/backup';
       final Directory backupDirectory = Directory(backupDirectoryPath);
 
 
