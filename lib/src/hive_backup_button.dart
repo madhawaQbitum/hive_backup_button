@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-
+import 'package:get/get.dart';
 class HiveBackupButton extends StatefulWidget {
   const HiveBackupButton({
     super.key,
@@ -39,11 +39,11 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
         const SnackBar(content: Text('Backup completed successfully!')),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
         const SnackBar(content: Text('Permission denied for backup!')),
       );
     }
