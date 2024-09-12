@@ -51,11 +51,11 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
 
   @override
   Widget build(BuildContext context) {
-    return FloatingActionButton(
+    return OutlinedButton(
       onPressed: () async {
         await backupDatabase();
       },
-      child: const Text("Backup Hive Data"),
+      child: const Text("Backup Data"),
     );
   }
 }
