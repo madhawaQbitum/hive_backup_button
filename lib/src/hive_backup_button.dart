@@ -75,10 +75,11 @@ Get.defaultDialog(
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
+
       onPressed: () async {
         await backupDatabase();
       },
-      child: const Text("Backup Data"),
+      child: const Text("Backup Data",style: TextStyle(color: Colors.black, fontSize: 19)),
     );
   }
 }
