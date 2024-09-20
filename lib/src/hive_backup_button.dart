@@ -18,30 +18,42 @@ class HiveBackupButton extends StatefulWidget {
 class _HiveBackupButtonState extends State<HiveBackupButton> {
   Future<void> backupDatabase() async {
     if (await widget.permission) {
-
-      const String backupDirectoryPath = '/storage/emulated/0/backup';
-      final Directory backupDirectory = Directory(backupDirectoryPath);
-
-
-      if (!await backupDirectory.exists()) {
-        await backupDirectory.create(recursive: true);
-      }
-
-
-      for (Box box in widget.hiveBox) {
-        final String boxFilePath = '${box.path}';
-        final String boxBackupPath = '$backupDirectoryPath/${box.name}.hive';
+Get.defaultDialog(
+  title: "Data Backup Alert",
+  middleText: "Do you want to Backup the App Data?",
+  textConfirm: "Yes",
+  textCancel: "No",
+  onConfirm: ()async {
+    const String backupDirectoryPath = '/storage/emulated/0/backup';
+    final Directory backupDirectory = Directory(backupDirectoryPath);
 
 
-        final File originalBoxFile = File(boxFilePath);
-        if (await originalBoxFile.exists()) {
-          await originalBoxFile.copy(boxBackupPath);
-        }
-      }
+    if (!await backupDirectory.exists()) {
+    await backupDirectory.create(recursive: true);
+    }
 
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        const SnackBar(content: Text('Backup completed successfully!')),
-      );
+
+    for (Box box in widget.hiveBox) {
+    final String boxFilePath = '${box.path}';
+    final String boxBackupPath = '$backupDirectoryPath/${box.name}.hive';
+
+
+    final File originalBoxFile = File(boxFilePath);
+    if (await originalBoxFile.exists()) {
+    await originalBoxFile.copy(boxBackupPath);
+    }
+    }
+
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+    const SnackBar(content: Text('Backup completed successfully!')),
+    );
+  },
+  onCancel: () {
+    Get.back();
+  },
+
+);
+
     } else {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         const SnackBar(content: Text('Permission denied for backup!')),
