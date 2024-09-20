@@ -1,7 +1,7 @@
 name: hive_backup
 description: "A new Flutter project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/madhawaQbitum/hive_backup_button.git
 
 environment:
   sdk: '>=3.3.1 <4.0.0'
