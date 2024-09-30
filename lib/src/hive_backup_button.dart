@@ -73,6 +73,7 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
               if (await hiveDir.exists()) {
                 if (!await backupDir.exists()) {
                   await backupDir.create(recursive: true);
+
                 }
 
                 // Get all files in the backup directory
