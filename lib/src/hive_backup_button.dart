@@ -20,95 +20,90 @@ class HiveBackupButton extends StatefulWidget {
 class _HiveBackupButtonState extends State<HiveBackupButton> {
   Future<void> backupDatabase() async {
     if (await widget.permission) {
-Get.defaultDialog(
-  title: "Data Backup Alert",
-  middleText: "Do you want to Backup the App Data?",
-  textConfirm: "Yes",
-  textCancel: "No",
-  confirm: material.FilledButton(
-  //   onPressed: () async{
-  //     const String backupDirectoryPath = '/storage/emulated/0/backup';
-  //     final Directory backupDirectory = Directory(backupDirectoryPath);
-  //
-  //
-  //     if (!await backupDirectory.exists()) {
-  //     await backupDirectory.create(recursive: true);
-  //     }
-  //
-  //
-  //     for (Box box in widget.hiveBox) {
-  //     final String boxFilePath = '${box.path}';
-  //     final String boxBackupPath = '$backupDirectoryPath/${box.name}.hive';
-  //
-  //
-  //     final File originalBoxFile = File(boxFilePath);
-  //     if (await originalBoxFile.exists()) {
-  //     await originalBoxFile.copy(boxBackupPath);
-  //     }
-  //     }
-  //
-  //     ScaffoldMessenger.of(Get.context!).showSnackBar(
-  //     const SnackBar(content: Text('Backup completed successfully!')),
-  //     );
-  //     Get.back();
-  //   },
-  //   child: const material.Text('Yes'),
-  // ),
-  // cancel: material.FilledButton(
-  //   onPressed: () {
-  //     Get.back();
-  //
-  //   },
-  //   child: const material.Text('No'),
-  // ),
-  // backgroundColor: Get.theme.colorScheme.surface,
-    onPressed: () async{
-      const String backupPath = '/storage/emulated/0/backup';
-      String hivePath = (await getApplicationSupportDirectory()).path;
+      Get.defaultDialog(
+        title: "Data Backup Alert",
+        middleText: "Do you want to Backup the App Data?",
+        textConfirm: "Yes",
+        textCancel: "No",
+        confirm: material.FilledButton(
+          //   onPressed: () async{
+          //     const String backupDirectoryPath = '/storage/emulated/0/backup';
+          //     final Directory backupDirectory = Directory(backupDirectoryPath);
+          //
+          //
+          //     if (!await backupDirectory.exists()) {
+          //     await backupDirectory.create(recursive: true);
+          //     }
+          //
+          //
+          //     for (Box box in widget.hiveBox) {
+          //     final String boxFilePath = '${box.path}';
+          //     final String boxBackupPath = '$backupDirectoryPath/${box.name}.hive';
+          //
+          //
+          //     final File originalBoxFile = File(boxFilePath);
+          //     if (await originalBoxFile.exists()) {
+          //     await originalBoxFile.copy(boxBackupPath);
+          //     }
+          //     }
+          //
+          //     ScaffoldMessenger.of(Get.context!).showSnackBar(
+          //     const SnackBar(content: Text('Backup completed successfully!')),
+          //     );
+          //     Get.back();
+          //   },
+          //   child: const material.Text('Yes'),
+          // ),
+          // cancel: material.FilledButton(
+          //   onPressed: () {
+          //     Get.back();
+          //
+          //   },
+          //   child: const material.Text('No'),
+          // ),
+          // backgroundColor: Get.theme.colorScheme.surface,
+          onPressed: () async {
+             final Directory? backupDir = await getExternalStorageDirectory();
+            final String backupPath = '${backupDir?.path}/backup';
+            final Directory hiveDir = Directory((await getApplicationSupportDirectory()).path);
 
-      final Directory backupDir = Directory(backupPath);
-      final Directory hiveDir = Directory(hivePath);
+            if (await hiveDir.exists()) {
+              if (!(await backupDir?.exists() ?? false)) {
+                await backupDir?.create(recursive: true);
+              }
 
-      if (await hiveDir.exists()) {
-        if (!await backupDir.exists()) {
-          await backupDir.create(recursive: true);
-        }
+              // Get all files in the backup directory
+              List<FileSystemEntity> backupFiles = hiveDir.listSync();
 
-        // Get all files in the backup directory
-        List<FileSystemEntity> backupFiles = hiveDir.listSync();
-
-        // Copy each file from backup to the Hive directory
-        for (FileSystemEntity entity in backupFiles) {
-          if (entity is File) {
-            final String fileName = entity.uri.pathSegments.last;
-            final File destinationFile = File('$backupPath/$fileName');
-            if (await destinationFile.exists()) {
-              await destinationFile.delete(); // Remove the old file if necessary
+              // Copy each file from backup to the Hive directory
+              for (FileSystemEntity entity in backupFiles) {
+                if (entity is File) {
+                  final String fileName = entity.uri.pathSegments.last;
+                  final File destinationFile = File('$backupPath/$fileName');
+                  if (await destinationFile.exists()) {
+                    await destinationFile
+                        .delete(); // Remove the old file if necessary
+                  }
+                  await entity.copy(destinationFile.path);
+                }
+              }
             }
-            await entity.copy(destinationFile.path);
-          }
-        }
-      }
 
-
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        const SnackBar(content: Text('Backup completed successfully!')),
+            ScaffoldMessenger.of(Get.context!).showSnackBar(
+              const SnackBar(content: Text('Backup completed successfully!')),
+            );
+            Get.back();
+          },
+          child: const material.Text('Yes'),
+        ),
+        cancel: material.FilledButton(
+          onPressed: () {
+            Get.back();
+          },
+          child: const material.Text('No'),
+        ),
+        backgroundColor: Get.theme.colorScheme.surface,
       );
-      Get.back();
-    },
-    child: const material.Text('Yes'),
-  ),
-  cancel: material.FilledButton(
-    onPressed: () {
-      Get.back();
-
-    },
-    child: const material.Text('No'),
-  ),
-  backgroundColor: Get.theme.colorScheme.surface,
-
-);
-
     } else {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         const SnackBar(content: Text('Permission denied for backup!')),
@@ -119,11 +114,11 @@ Get.defaultDialog(
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-
       onPressed: () async {
         await backupDatabase();
       },
-      child: const Text("Backup Data",style: TextStyle(color: Colors.black, fontSize: 19)),
+      child: const Text("Backup Data",
+          style: TextStyle(color: Colors.black, fontSize: 19)),
     );
   }
 }
