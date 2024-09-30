@@ -69,11 +69,10 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
 
             final Directory backupDir = Directory(backupPath);
             final Directory hiveDir = Directory(hivePath);
-            if(await Permission.manageExternalStorage.request().isGranted) {
+            if (await Permission.manageExternalStorage.request().isGranted) {
               if (await hiveDir.exists()) {
                 if (!await backupDir.exists()) {
                   await backupDir.create(recursive: true);
-
                 }
 
                 // Get all files in the backup directory
