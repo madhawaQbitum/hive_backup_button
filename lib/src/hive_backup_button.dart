@@ -82,7 +82,9 @@ Get.defaultDialog(
           if (entity is File) {
             final String fileName = entity.uri.pathSegments.last;
             final File destinationFile = File('$backupPath/$fileName');
-
+            if (await destinationFile.exists()) {
+              await destinationFile.delete(); // Remove the old file if necessary
+            }
             await entity.copy(destinationFile.path);
           }
         }
