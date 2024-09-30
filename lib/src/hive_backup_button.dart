@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart' as material;
 import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HiveBackupButton extends StatefulWidget {
   const HiveBackupButton({
@@ -68,25 +69,26 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
 
             final Directory backupDir = Directory(backupPath);
             final Directory hiveDir = Directory(hivePath);
+            if(await Permission.manageExternalStorage.request().isGranted) {
+              if (await hiveDir.exists()) {
+                if (!await backupDir.exists()) {
+                  await backupDir.create(recursive: true);
+                }
 
-            if (await hiveDir.exists()) {
-              if (!await backupDir.exists()) {
-                await backupDir.create(recursive: true);
-              }
+                // Get all files in the backup directory
+                List<FileSystemEntity> backupFiles = hiveDir.listSync();
 
-              // Get all files in the backup directory
-              List<FileSystemEntity> backupFiles = hiveDir.listSync();
-
-              // Copy each file from backup to the Hive directory
-              for (FileSystemEntity entity in backupFiles) {
-                if (entity is File) {
-                  final String fileName = entity.uri.pathSegments.last;
-                  final File destinationFile = File('$backupPath/$fileName');
-                  if (await destinationFile.exists()) {
-                    await destinationFile
-                        .delete(); // Remove the old file if necessary
+                // Copy each file from backup to the Hive directory
+                for (FileSystemEntity entity in backupFiles) {
+                  if (entity is File) {
+                    final String fileName = entity.uri.pathSegments.last;
+                    final File destinationFile = File('$backupPath/$fileName');
+                    if (await destinationFile.exists()) {
+                      await destinationFile
+                          .delete(); // Remove the old file if necessary
+                    }
+                    await entity.copy(destinationFile.path);
                   }
-                  await entity.copy(destinationFile.path);
                 }
               }
             }
