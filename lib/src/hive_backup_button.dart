@@ -63,13 +63,15 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
           // ),
           // backgroundColor: Get.theme.colorScheme.surface,
           onPressed: () async {
-             final Directory? backupDir = await getExternalStorageDirectory();
-            final String backupPath = '${backupDir?.path}/backup';
-            final Directory hiveDir = Directory((await getApplicationSupportDirectory()).path);
+            const String backupPath = '/storage/emulated/0/backup';
+            String hivePath = (await getApplicationSupportDirectory()).path;
+
+            final Directory backupDir = Directory(backupPath);
+            final Directory hiveDir = Directory(hivePath);
 
             if (await hiveDir.exists()) {
-              if (!(await backupDir?.exists() ?? false)) {
-                await backupDir?.create(recursive: true);
+              if (!await backupDir.exists()) {
+                await backupDir.create(recursive: true);
               }
 
               // Get all files in the backup directory
