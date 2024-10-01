@@ -65,7 +65,7 @@ class _HiveBackupButtonState extends State<HiveBackupButton> {
           // backgroundColor: Get.theme.colorScheme.surface,
           onPressed: () async {
             const String backupPath = '/storage/emulated/0/makeit_app_backup';
-            String hivePath = (await getExternalStorageDirectory())!.path;
+            String hivePath = (await getApplicationSupportDirectory()).path;
 
             final Directory backupDir = Directory(backupPath);
             final Directory hiveDir = Directory(hivePath);
